@@ -4,7 +4,7 @@
 SUBSCRIPTION_ID="subscription-any-projects"
 LOCATION="southeastasia"
 POSTFIX="sea"
-RESOURCE_GROUP="rg-c8kv-$POSTFIX"
+RESOURCE_GROUP="rg-c8kv-2-$POSTFIX"
 
 # ===============
 # Virtual Network
@@ -37,6 +37,9 @@ HUB_SUBNET_VM_PREFIX="10.0.0.192/27"
 # - serverfarm
 SPOKE_VNET_NAME="vnet-serverfarm-$POSTFIX"
 SPOKE_VNET_PREFIX="10.99.99.0/24"
+# Azure Firewall
+SPOKE_SUBNET_AZFW_NAME="AzureFirewallSubnet"
+SPOKE_SUBNET_AZFW_PREFIX="10.99.99.0/26"
 # Spoke VM
 SPOKE_SUBNET_SERVERFARM_NAME="subnet-serverfarm-$POSTFIX"
 SPOKE_SUBNET_SERVERFARM_PREFIX="10.99.99.64/27"
@@ -48,14 +51,22 @@ NSG_TRANSPORT_NAME="nsg-c8kv-transport-$POSTFIX"
 NSG_SERVICE_NAME="nsg-c8kv-service-$POSTFIX"
 NSG_VM_NAME="nsg-vm-$POSTFIX"
 
-#
+# ===============
 # Internal Load Balancer
-#
+# ===============
 ILB_NAME="ilb-c8kv-$POSTFIX"
 ILB_FRONTEND_NAME="ilb-c8kv-frontend"
 ILB_FRONTEND_PRIVATE_IP="10.0.0.102"
 ILB_BACKEND_POOL_NAME="ilb-c8kv-backend"
 
+# ===============
+# Azure Firewall
+# ===============
+AZFW_NAME="azfw-serverfarm-$POSTFIX"
+AZFW_PUBLIC_IP_NAME="azfw-public-ip-$POSTFIX"
+AZFW_PRIVATE_IP="10.99.99.4"
+
+AZFW_POLICY_NAME="azfw-policy-$POSTFIX"
 
 #
 # VM Global Variables
@@ -101,3 +112,4 @@ SERVERFARM_PRIVATE_IP="10.99.99.68"
 # Route Table
 #
 RT_HUB_NAME="rt-serverfarm-$POSTFIX"
+RT_AZFW_NAME="rt-azfw-$POSTFIX"
