@@ -1,6 +1,18 @@
-#!/bin/bash
+#cloud-config
+package_update: true
+package_upgrade: true
 
-apt update -y
-apt install -y git
-git clone https://github.com/upa/deadman
-apt install -y mtr hping3
+packages:
+  - iputils-ping
+  - mtr
+  - git
+  - vim
+  - dnsutils
+  - python3-pip
+  - ansible
+  - hping3
+
+runcmd:
+  - cd /home/cisco
+  - git clone https://github.com/upa/deadman
+  - pip install --upgrade pip
