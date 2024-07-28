@@ -1,0 +1,19 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+
+packages:
+  - iputils-ping
+  - mtr
+  - git
+  - vim
+  - dnsutils
+  - python3-pip
+  - ansible
+  - hping3
+
+runcmd:
+  - cd /home/cisco
+  - git clone https://github.com/upa/deadman
+  - chown -R cisco:cisco /home/cisco/deadman
+  - pip install --upgrade pip

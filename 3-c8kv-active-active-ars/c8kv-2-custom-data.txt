@@ -1,0 +1,39 @@
+Section: IOS configuration
+line vty 0 4
+exec-timeout 0 0
+! Azure sources the ILB probes from 168.63.129.16
+ip route 168.63.129.16 255.255.255.255 10.0.0.97
+! Static routing towards the spoke VNETs pointing out the internal interface
+ip route 10.99.99.0 255.255.255.0 10.0.0.97
+interface gigabitEthernet 1
+ip address 10.0.0.69 255.255.255.224
+ip nat outside
+negotiation auto
+no shutdown
+interface gigabitEthernet 2
+ip nat inside
+ip address 10.0.0.101 255.255.255.224
+negotiation auto
+no shutdown
+! Allow the traffic from the spoke VNETs to the internet
+ip access-list standard SERVERFARM_NAT_ACL
+10 permit 10.99.99.0 0.0.0.255
+11 permit 10.1.1.0 0.0.0.255
+12 permit 10.1.2.0 0.0.0.255
+ip nat inside source list SERVERFARM_NAT_ACL interface gigabitEthernet 1 overload
+! Setup BGP 64415
+router bgp 64415
+timers bgp 60 18
+bgp log-neighbor-changes
+neighbor 10.0.0.36 remote-as 65515
+neighbor 10.0.0.36 ebgp-multihop 5
+neighbor 10.0.0.36 activate
+neighbor 10.0.0.36 soft-reconfiguration inbound
+neighbor 10.0.0.36 send-community both
+neighbor 10.0.0.37 remote-as 65515
+neighbor 10.0.0.37 ebgp-multihop 5
+neighbor 10.0.0.37 activate
+neighbor 10.0.0.37 soft-reconfiguration inbound
+neighbor 10.0.0.37 send-community both
+neighbor 10.0.0.100 remote-as 64415
+default-information originate
