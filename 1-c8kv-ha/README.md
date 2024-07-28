@@ -1,5 +1,11 @@
 # Cisco Catalyst 8000v High Availability (c8kv ha)
 
+## Topology
+
+![c8kv-ha](../img/1-c8kv-ha-overview.png)
+
+## References
+
 - [Configuring NAT on Cisco Routers Step-by-Step (PAT, Static NAT, Port Redirection][1]
 - [Cisco Catalyst 8000V Edge Software High Availability Configuration Guide][2]
 - [Catalyst 8000v deployment on Azure][3]
