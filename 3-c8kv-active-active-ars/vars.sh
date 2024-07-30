@@ -83,9 +83,10 @@ VM_SIZE="Standard_D2_v2" # Standard_D4_v2
 
 # az vm image list-offers --location southeastasia --publisher cisco --output table
 # az vm image list-skus --location southeastasia --publisher cisco --offer cisco-c8000v-byol --output table
-# az vm image list --location southeastasia --publisher cisco --offer cisco-c8000v-byol --sku 17_14_01a-byol --all --output table
+# az vm image list --location southeastasia --publisher cisco --offer cisco-c8000v-byol --sku 17_09_04a-byol --all --output table
 # az vm image terms accept --urn cisco:cisco-c8000v-byol:17_14_01a-byol:17.14.0120240501
-SKU_IMAGE="cisco:cisco-c8000v-byol:17_14_01a-byol:17.14.0120240501"
+# SKU_IMAGE="cisco:cisco-c8000v-byol:17_14_01a-byol:17.14.0120240501"
+SKU_IMAGE="cisco:cisco-c8000v-byol:17_09_04a-byol:17.12.0920231030"
 
 # ===============
 # C8KV-1
