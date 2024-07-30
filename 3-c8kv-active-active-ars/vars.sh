@@ -68,6 +68,10 @@ ARS_PIP_NAME="pip-ars-$POSTFIX"
 ERGW_NAME="ergw-hub-$POSTFIX"
 ERGW_PIP_NAME="pip-ergw-hub-$POSTFIX"
 
+# ===================
+# ExpressRoute Circuit
+# ====================
+ER_CIRCUIT_PEERING_ID="/subscriptions/0a4374d1-bc72-46f6-a4ae-a9d8401369db/resourceGroups/rg-hub-er-taiwannorth/providers/Microsoft.Network/expressRouteCircuits/er-standard-50Mbps-taiwannorth"
 
 #
 # VM Global Variables
