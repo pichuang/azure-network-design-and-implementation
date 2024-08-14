@@ -1,0 +1,5 @@
+4-triangle-vwan/.terraform.lock.hcl
+4-triangle-vwan/.terraform/*
+4-triangle-vwan/.terraform.tfstate.lock.info
+4-triangle-vwan/terraform.tfstate.backup
+4-triangle-vwan/terraform.tfstate

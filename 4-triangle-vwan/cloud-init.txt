@@ -1,0 +1,39 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+
+packages:
+  - iputils-ping
+  - mtr
+  - git
+  - vim
+  - dnsutils
+  - python3-pip
+  - ansible
+
+write_files:
+  - path: /home/repairman/deadman.conf
+    content: |
+      vm-1 10.11.11.4
+      vm-2 10.22.22.4
+      vm-3 10.33.33.4
+      google 8.8.8.8
+      cht 168.95.1.1
+  
+  - path: /etc/hosts
+    content: |
+      127.0.0.1 localhost
+      10.11.11.4 vm-1 vm-southeastasia
+      10.22.22.4 vm-2 vm-taiwannorth
+      10.33.33.4 vm-3 vm-japaneast
+
+  - path: /home/repairman/simple-http-server.py
+    content: |
+      #!/bin/bash
+      sudo python3 -m http.server 80
+
+runcmd:
+  - cd /home/repairman
+  - git clone https://github.com/upa/deadman
+  - chown -R "repairman:repairman" /home/repairman/deadman
+  - pip install --upgrade pip
