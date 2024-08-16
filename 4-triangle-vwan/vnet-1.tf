@@ -42,6 +42,29 @@ resource "azurerm_network_security_group" "nsg-vnet-1" {
     destination_address_prefix = "*"
   }
 
+  security_rule {
+    name                       = "Allow-inbound-icmp"
+    priority                   = 1002
+    direction                  = "Inbound"
+    access                     = "Allow"
+    protocol                   = "Icmp"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
+
+  security_rule {
+    name                       = "Allow-outbound-any"
+    priority                   = 1003
+    direction                  = "Outbound"
+    access                     = "Allow"
+    protocol                   = "*"
+    source_port_range          = "*"
+    destination_port_range     = "*"
+    source_address_prefix      = "*"
+    destination_address_prefix = "*"
+  }
 }
 
 resource "azurerm_public_ip" "public-ip-vnet-1" {

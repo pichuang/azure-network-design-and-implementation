@@ -1,8 +1,12 @@
 terraform {
+  required_version = "~> v1.5.7"
   required_providers {
     azurerm = {
       source  = "hashicorp/azurerm"
-      version = "=3.115.0"
+      version = "~> 3.115.0"
+    }
+   random = {
+      version = "~> 3.6.2"
     }
   }
 }
@@ -13,9 +17,6 @@ provider "azurerm" {
       purge_soft_delete_on_destroy = true
     }
   }
-}
-
-provider "random" {
 }
 
 resource "azurerm_resource_group" "resource-group" {
