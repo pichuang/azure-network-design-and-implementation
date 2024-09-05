@@ -26,24 +26,24 @@ resource "azurerm_firewall_policy_rule_collection_group" "azfw-rcg" {
   name               = "azfw-rcg"
   firewall_policy_id = azurerm_firewall_policy.azfw-policy.id
   priority           = 500
-#   application_rule_collection {
-#     name     = "app_rule_collection1"
-#     priority = 500
-#     action   = "Deny"
-#     rule {
-#       name = "app_rule_collection1_rule1"
-#       protocols {
-#         type = "Http"
-#         port = 80
-#       }
-#       protocols {
-#         type = "Https"
-#         port = 443
-#       }
-#       source_addresses  = ["10.0.0.1"]
-#       destination_fqdns = ["*.microsoft.com"]
-#     }
-#   }
+  #   application_rule_collection {
+  #     name     = "app_rule_collection1"
+  #     priority = 500
+  #     action   = "Deny"
+  #     rule {
+  #       name = "app_rule_collection1_rule1"
+  #       protocols {
+  #         type = "Http"
+  #         port = 80
+  #       }
+  #       protocols {
+  #         type = "Https"
+  #         port = 443
+  #       }
+  #       source_addresses  = ["10.0.0.1"]
+  #       destination_fqdns = ["*.microsoft.com"]
+  #     }
+  #   }
 
   network_rule_collection {
     name     = "nrc-anytoany"

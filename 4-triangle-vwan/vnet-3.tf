@@ -53,7 +53,7 @@ resource "azurerm_network_security_group" "nsg-vnet-3" {
     source_address_prefix      = "*"
     destination_address_prefix = "*"
   }
-  
+
   security_rule {
     name                       = "Allow-outbound-any"
     priority                   = 1003
@@ -64,7 +64,7 @@ resource "azurerm_network_security_group" "nsg-vnet-3" {
     destination_port_range     = "*"
     source_address_prefix      = "*"
     destination_address_prefix = "*"
-  }  
+  }
 }
 
 resource "azurerm_public_ip" "public-ip-vnet-3" {
@@ -78,11 +78,11 @@ resource "azurerm_public_ip" "public-ip-vnet-3" {
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface
 # Create network interface card
 resource "azurerm_network_interface" "nic-vnet-3" {
-  name                = "nic-${var.vhub-3-region}"
-  location            = var.vhub-3-region
-  resource_group_name = var.lab-rg
+  name                           = "nic-${var.vhub-3-region}"
+  location                       = var.vhub-3-region
+  resource_group_name            = var.lab-rg
   accelerated_networking_enabled = true
-  ip_forwarding_enabled = true
+  ip_forwarding_enabled          = true
 
   ip_configuration {
     name                          = "ipconfig-nic-vm-${var.vhub-3-region}"
@@ -126,7 +126,7 @@ resource "azurerm_linux_virtual_machine" "vm-hub-3" {
   admin_password                  = var.admin_password
 
   admin_ssh_key {
-    username   = var.admin_username
+    username = var.admin_username
 
     public_key = file("~/.ssh/poc-ms.pub")
   }
@@ -141,19 +141,19 @@ resource "azurerm_linux_virtual_machine" "vm-hub-3" {
 resource "random_string" "suffix-3" {
   length  = 10
   special = false
-  upper = false
+  upper   = false
 }
 
 resource "azurerm_storage_account" "sa-boot-diagnostics-3" {
-  name                     = "triangle${random_string.suffix-3.result}"
-  resource_group_name      = var.lab-rg
-  location                 = var.vhub-3-region
-  account_kind = "StorageV2"
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  access_tier = "Hot"
+  name                            = "triangle${random_string.suffix-3.result}"
+  resource_group_name             = var.lab-rg
+  location                        = var.vhub-3-region
+  account_kind                    = "StorageV2"
+  account_tier                    = "Standard"
+  account_replication_type        = "LRS"
+  access_tier                     = "Hot"
   allow_nested_items_to_be_public = true
-  public_network_access_enabled = true
+  public_network_access_enabled   = true
 
   blob_properties {
     versioning_enabled = false

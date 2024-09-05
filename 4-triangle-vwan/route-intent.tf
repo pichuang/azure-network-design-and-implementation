@@ -41,7 +41,7 @@ resource "azurerm_virtual_hub_routing_intent" "routingintent-vhub-3" {
     destinations = ["Internet"]
     next_hop     = azurerm_firewall.azfw-3.id
   }
-  
+
   routing_policy {
     name         = "PrivateTrafficPolicy"
     destinations = ["PrivateTraffic"]

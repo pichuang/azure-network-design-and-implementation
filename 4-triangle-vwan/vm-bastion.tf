@@ -10,11 +10,11 @@ resource "azurerm_public_ip" "public-ip-bastion" {
 #https://registry.terraform.io/providers/hashicorp/azurerm/latest/docs/resources/network_interface
 # Create network interface card
 resource "azurerm_network_interface" "nic-bastion" {
-  name                = "nic-bastion"
-  location            = var.vhub-2-region
-  resource_group_name = var.lab-rg
+  name                           = "nic-bastion"
+  location                       = var.vhub-2-region
+  resource_group_name            = var.lab-rg
   accelerated_networking_enabled = true
-  ip_forwarding_enabled = true
+  ip_forwarding_enabled          = true
 
   ip_configuration {
     name                          = "ipconfig-nic-vm-bastion"
@@ -58,7 +58,7 @@ resource "azurerm_linux_virtual_machine" "vm-hub-bastion" {
   admin_password                  = var.admin_password
 
   admin_ssh_key {
-    username   = var.admin_username
+    username = var.admin_username
 
     public_key = file("~/.ssh/poc-ms.pub")
   }
@@ -73,19 +73,19 @@ resource "azurerm_linux_virtual_machine" "vm-hub-bastion" {
 resource "random_string" "suffix-bastion" {
   length  = 10
   special = false
-  upper = false
+  upper   = false
 }
 
 resource "azurerm_storage_account" "sa-boot-diagnostics-bastion" {
-  name                     = "triangle${random_string.suffix-bastion.result}"
-  resource_group_name      = var.lab-rg
-  location                 = var.vhub-2-region
-  account_kind = "StorageV2"
-  account_tier             = "Standard"
-  account_replication_type = "LRS"
-  access_tier = "Hot"
+  name                            = "triangle${random_string.suffix-bastion.result}"
+  resource_group_name             = var.lab-rg
+  location                        = var.vhub-2-region
+  account_kind                    = "StorageV2"
+  account_tier                    = "Standard"
+  account_replication_type        = "LRS"
+  access_tier                     = "Hot"
   allow_nested_items_to_be_public = true
-  public_network_access_enabled = true
+  public_network_access_enabled   = true
 
   blob_properties {
     versioning_enabled = false
