@@ -13,6 +13,7 @@ packages:
   - ca-certificates
   - curl
   - rsync
+  - hping3
   - neofetch
 
 write_files:
@@ -84,21 +85,17 @@ write_files:
 
   - path: /home/repairman/deadman.conf
     content: |
-      vm-1-private 10.11.11.4
-      vm-2-private 10.22.22.4
-      vm-3-private 10.33.33.4
-      vm-1-public
-      vm-2-public
-      vm-3-public
-      google 8.8.8.8
-      cht 168.95.1.1
+      az-tw 10.3.3.4
+      az-se 10.2.5.9
+      google 8.8.8.8 tcp=dstport:53
+      hinet 168.95.1.1 tcp=dstport:53
 
   - path: /etc/hosts
     content: |
       127.0.0.1 localhost
-      10.11.11.4 vm-1 vm-southeastasia
-      10.22.22.4 vm-2 vm-taiwannorth
-      10.33.33.4 vm-3 vm-japaneast
+      10.3.3.5 vm-bastion
+      10.3.3.4 az-tw
+      10.2.5.9 az-se
 
   - path: /home/repairman/simple-http-server.py
     content: |
@@ -115,6 +112,7 @@ write_files:
 runcmd:
   - cd /home/repairman
   - git clone https://github.com/upa/deadman
+  - chown -R "repairman:repairman" /home/repairman
   - pip install --upgrade pip
   - chmod +x /tmp/install-docker.sh
   - sh /tmp/install-docker.sh
