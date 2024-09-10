@@ -36,6 +36,6 @@
 
 ![](./img/disable-vwan-effective-route-azfw.png)
 
-### B.3 VM - Effective routes
+### B.4 VM - Effective routes
 
 ![](./img/disable-effective-route.png)
