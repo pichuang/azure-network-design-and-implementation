@@ -32,7 +32,7 @@
 
 ![](./img/disable-vwan-effective-route-route-table.png)
 
-### B.3 Virtual Network - Effective routes - Azure Firewall
+### B.3 Virtual WAN - Effective routes - Azure Firewall
 
 ![](./img/disable-vwan-effective-route-azfw.png)
 
