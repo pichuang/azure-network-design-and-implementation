@@ -1,8 +1,6 @@
 #!/bin/bash
 
-ROUTE_SERVER_ID=${1:-"/subscriptions/0a4374d1-bc72-46f6-a4ae-a9d8401369db/resourceGroups/rg-hub-er-taiwannorth/providers/Microsoft.Network/virtualHubs/ars-taiwannorth"}
-
-az network routeserver peering list-advertised-routes --ids ${ROUTE_SERVER_ID} -o json --only-show-errors
+ROUTE_SERVER_ID=${1:-"/subscriptions/ccbaf256-59c9-4146-a5fa-043af46baa36/resourceGroups/Yageo-Hub-RG/providers/Microsoft.Network/virtualHubs/ars-yageo"}
 
 
-az network routeserver peering list -g rg-hub-er-taiwannorth --routeserver ars-taiwannorth
+az network routeserver peering list-advertised-routes --ids ${ROUTE_SERVER_ID} --name ars-yageo-velodedge

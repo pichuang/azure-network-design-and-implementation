@@ -1,0 +1,11 @@
+config system interface
+    edit port1
+        set mode static
+        set ip 10.255.248.116/32
+        set description "external"
+    next
+    edit port2
+        set mode static
+        set ip 10.255.248.132/32
+        set description "internal"
+    next
