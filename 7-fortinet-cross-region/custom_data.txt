@@ -1,0 +1,60 @@
+#cloud-config
+package_update: true
+package_upgrade: true
+
+packages:
+  - iputils-ping
+  - iputils-tracepath
+  - mtr
+  - git
+  - vim
+  - dnsutils
+  - python3-pip
+  - ansible
+  - ca-certificates
+  - curl
+  - rsync
+  - hping3
+  - neofetch
+
+write_files:
+  - path: /tmp/install-docker.sh
+    content: |
+      sudo apt-get update
+      sudo apt-get install ca-certificates curl
+      sudo install -m 0755 -d /etc/apt/keyrings
+      sudo curl -fsSL https://download.docker.com/linux/ubuntu/gpg -o /etc/apt/keyrings/docker.asc
+      sudo chmod a+r /etc/apt/keyrings/docker.asc
+
+      # Add the repository to Apt sources:
+      echo \
+        "deb [arch=$(dpkg --print-architecture) signed-by=/etc/apt/keyrings/docker.asc] https://download.docker.com/linux/ubuntu \
+        $(. /etc/os-release && echo "$VERSION_CODENAME") stable" | \
+        sudo tee /etc/apt/sources.list.d/docker.list > /dev/null
+      sudo apt-get update -y
+      sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
+
+  - path: /home/repairman/simple-http-server.sh
+    permissions: 0644
+    content: |
+      #!/bin/bash
+      sudo python3 -m http.server 80
+
+  - path: /home/repairman/.bash_profile
+    content: |
+      # Run neofetch on login
+      if command -v neofetch &> /dev/null; then
+          neofetch
+      fi
+
+runcmd:
+  - cd /home/repairman
+  - git clone https://github.com/upa/deadman
+  - chown -R "repairman:repairman" /home/repairman
+  - pip install --upgrade pip
+  - chmod +x /tmp/install-docker.sh
+  - sh /tmp/install-docker.sh
+  - mkdir -p /home/repairman/.config/neofetch/
+  - wget https://gist.githubusercontent.com/pichuang/af9aa7874db3e2573a80d7d8219d43de/raw/a1441b0d43e97f5e523683e501ad12ce33cf2fd0/config.conf -O /home/repairman/.config/neofetch/config.conf
+  - git clone https://github.com/pichuang/azure-network-measurement
+  - chown -R "repairman:repairman" /home/repairman
