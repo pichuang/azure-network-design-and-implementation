@@ -36,7 +36,7 @@ resource "azurerm_route_server_bgp_connection" "rs-bgp-conn-b" {
   name            = "fortinet-b"
   route_server_id = azurerm_route_server.ars-b.id
   peer_asn        = 65250
-  peer_ip         = "172.26.0.4"
+  peer_ip         = "172.26.0.68"
 
   depends_on = [ azurerm_route_server.ars-b ]
 }

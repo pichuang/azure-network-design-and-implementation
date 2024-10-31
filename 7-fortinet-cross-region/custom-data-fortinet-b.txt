@@ -40,7 +40,7 @@ config system vxlan
   edit vx1
     set interface port1
     set vni 5566
-    set remote-ip 192.168.100.1
+    set remote-ip 172.16.0.4
   next
 end
 
@@ -121,7 +121,7 @@ config firewall policy
         set srcaddr "all"
         set dstaddr "all"
         set schedule "always"
-        set service "Allow Hub to Spoke Traffic"
+        set comments "Allow Hub to Spoke Traffic"
     next
     edit 6
         set name "Allow Hub-to-Spoke"
@@ -173,8 +173,8 @@ config router static
     next
     edit 5
         set dst 172.26.1.0 255.255.255.224
-        set gateway 172.26.0.1
-        set device "port1"
+        set gateway 172.26.0.65
+        set device "port2"
         set comment "Route to Azure Route Server"
     next
 end
@@ -210,7 +210,7 @@ config router bgp
             set ebgp-enforce-multihop enable
             set soft-reconfiguration enable
             set as-override enable
-            set interface "port1"
+            set interface "port2"
             set remote-as 65515
             set route-map-in "changepath"
         next
@@ -220,7 +220,7 @@ config router bgp
             set ebgp-enforce-multihop enable
             set soft-reconfiguration enable
             set as-override enable
-            set interface "port1"
+            set interface "port2"
             set remote-as 65515
             set route-map-in "changepath"
         next
