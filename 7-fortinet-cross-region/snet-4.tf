@@ -25,7 +25,7 @@ module "rt-4" {
       next_hop_in_ip_address = "172.26.0.100"
     }
 
-    rt-to-1 = {
+    rt-to-3 = {
       name                   = "rt-to-3"
       address_prefix         = "192.168.3.0/24"
       next_hop_type          = "VirtualAppliance"
@@ -33,9 +33,9 @@ module "rt-4" {
     }
   }
 
-  # subnet_resource_ids = {
-  #   subnet1 = module.snet-4.resource_id
-  # }
+  subnet_resource_ids = {
+    subnet1 = module.snet-4.resource_id
+  }
 
   depends_on = [
     module.rg-b,

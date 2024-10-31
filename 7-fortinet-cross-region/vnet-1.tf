@@ -8,7 +8,7 @@ module "vnet-1" {
   name                = "vnet-1"
 
   subnets = {
-    "snet-1" = {
+    snet-1 = {
       name             = "snet-1"
       address_prefixes = ["192.168.1.0/25"]
       route_table = {
@@ -83,7 +83,7 @@ module "rt-1" {
       next_hop_type          = "VirtualAppliance"
       next_hop_in_ip_address = "172.16.0.100"
     }
-    rt-to-62-2 = {
+    rt-to-2 = {
       name                   = "rt-to-2"
       address_prefix         = "172.16.2.0/24"
       next_hop_type          = "VirtualAppliance"

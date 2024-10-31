@@ -20,7 +20,9 @@ module "vnet-fgt-b" {
     snet-internal = {
       name             = "snet-internal"
       address_prefixes = ["172.26.0.64/26"]
-
+      route_table = {
+        id = module.rt-fgt-internal-b.resource_id
+      }
     }
 
     snet-ars-b = {
