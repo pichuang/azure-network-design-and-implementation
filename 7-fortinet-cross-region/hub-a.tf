@@ -12,11 +12,17 @@ module "vnet-fgt-a" {
     snet-external = {
       name             = "snet-external"
       address_prefixes = ["172.16.0.0/26"]
+      route_table = {
+        id = module.rt-fgt-external-a.resource_id
+      }
     }
 
     snet-internal = {
       name             = "snet-internal"
       address_prefixes = ["172.16.0.64/26"]
+      route_table = {
+        id = module.rt-fgt-internal-a.resource_id
+      }
     }
 
     snet-ars-a = {
@@ -38,7 +44,7 @@ module "rt-fgt-external-a" {
   resource_group_name = module.rg-a.name
   name                = "rt-fgt-external-a"
 
-  disable_bgp_route_propagation = false
+  disable_bgp_route_propagation = true
 
   routes = {
     default-route = {
@@ -64,7 +70,7 @@ module "rt-fgt-internal-a" {
   resource_group_name = module.rg-a.name
   name                = "rt-fgt-internal-a"
 
-  disable_bgp_route_propagation = false
+  disable_bgp_route_propagation = true
 
   subnet_resource_ids = {
     subnet1 = module.vnet-fgt-a.subnets["snet-internal"].resource_id

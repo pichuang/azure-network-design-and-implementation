@@ -34,18 +34,32 @@ write_files:
       sudo apt-get update -y
       sudo apt-get install docker-ce docker-ce-cli containerd.io docker-buildx-plugin docker-compose-plugin -y
 
-  - path: /home/repairman/simple-http-server.sh
-    permissions: 0644
-    content: |
-      #!/bin/bash
-      sudo python3 -m http.server 80
-
   - path: /home/repairman/.bash_profile
     content: |
       # Run neofetch on login
       if command -v neofetch &> /dev/null; then
           neofetch
       fi
+  - path: /home/repairman/lab.conf
+    content: |
+      vm-1 192.168.1.4
+      vm-2 172.16.2.4
+      vm-3 192.168.3.4
+      vm-4 172.26.2.4
+      ---
+      fgt-a-external 172.16.0.4
+      fgt-a-internal 172.16.0.68
+      fgt-a-vxlan-vx1 192.168.100.1
+      ---
+      fgt-b-external 172.26.0.4
+      fgt-b-internal 172.26.0.68
+      fgt-b-vxlan-vx1 192.168.100.2
+
+  - path: /home/repairman/run-lab.sh
+    permissions: 0644
+    content: |
+      #!/bin/bash
+      sudo ./deadman/deadman ./lab.conf -a
 
 runcmd:
   - cd /home/repairman

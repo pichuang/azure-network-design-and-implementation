@@ -6,6 +6,11 @@ module "snet-2" {
   virtual_network = {
     resource_id = module.vnet-fgt-a.resource_id
   }
+
+  route_table = {
+    id = module.rt-2.resource_id
+  }
+
   address_prefixes = ["172.16.2.0/24"]
 }
 
@@ -15,7 +20,7 @@ module "rt-2" {
   location                      = var.region-a
   resource_group_name           = module.rg-a.name
   name                          = "rt-2"
-  disable_bgp_route_propagation = false
+  disable_bgp_route_propagation = true
 
   routes = {
     default-route = {
@@ -59,7 +64,7 @@ module "vm-2" {
   admin_username                     = var.admin_username
   admin_password                     = var.admin_password
 
-  custom_data = base64encode(file("${path.module}/custom_data.txt"))
+  custom_data = base64encode(file("${path.module}/custom-data-vm.txt"))
 
   source_image_reference = {
     publisher = "Canonical"

@@ -15,7 +15,7 @@ module "rt-4" {
   location                      = var.region-b
   resource_group_name           = module.rg-b.name
   name                          = "rt-4"
-  disable_bgp_route_propagation = false
+  disable_bgp_route_propagation = true
 
   routes = {
     default-route = {
@@ -33,9 +33,9 @@ module "rt-4" {
     }
   }
 
-  subnet_resource_ids = {
-    subnet1 = module.snet-4.resource_id
-  }
+  # subnet_resource_ids = {
+  #   subnet1 = module.snet-4.resource_id
+  # }
 
   depends_on = [
     module.rg-b,
@@ -59,7 +59,7 @@ module "vm-4" {
   admin_username                     = var.admin_username
   admin_password                     = var.admin_password
 
-  custom_data = base64encode(file("${path.module}/custom_data.txt"))
+  custom_data = base64encode(file("${path.module}/custom-data-vm.txt"))
 
   source_image_reference = {
     publisher = "Canonical"

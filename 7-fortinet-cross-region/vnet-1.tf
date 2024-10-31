@@ -11,6 +11,9 @@ module "vnet-1" {
     "snet-1" = {
       name             = "snet-1"
       address_prefixes = ["192.168.1.0/25"]
+      route_table = {
+        id = module.rt-1.resource_id
+      }
     }
   }
 }
@@ -31,7 +34,7 @@ module "vm-1" {
   admin_username                     = var.admin_username
   admin_password                     = var.admin_password
 
-  custom_data = base64encode(file("${path.module}/custom_data.txt"))
+  custom_data = base64encode(file("${path.module}/custom-data-vm.txt"))
 
   source_image_reference = {
     publisher = "Canonical"
@@ -81,8 +84,8 @@ module "rt-1" {
       next_hop_in_ip_address = "172.16.0.100"
     }
     rt-to-62-2 = {
-      name                   = "rt-to-62-2"
-      address_prefix         = "172.26.2.0/24"
+      name                   = "rt-to-2"
+      address_prefix         = "172.16.2.0/24"
       next_hop_type          = "VirtualAppliance"
       next_hop_in_ip_address = "172.16.0.100"
     }
@@ -94,7 +97,6 @@ module "rt-1" {
 
   depends_on = [
     module.rg-a,
-    module.vnet-1,
   ]
 }
 
