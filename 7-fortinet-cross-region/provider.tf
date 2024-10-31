@@ -29,13 +29,13 @@ module "regions" {
 module "rg-a" {
   source   = "Azure/avm-res-resources-resourcegroup/azurerm"
   version  = "0.1.0"
-  location = "japaneast"
+  location = var.region-a
   name     = "rg-a"
 }
 
 module "rg-b" {
   source   = "Azure/avm-res-resources-resourcegroup/azurerm"
   version  = "0.1.0"
-  location = "japaneast"
+  location = var.region-b
   name     = "rg-b"
 }

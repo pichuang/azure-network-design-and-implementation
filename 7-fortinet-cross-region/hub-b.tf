@@ -1,42 +1,42 @@
-module "vnet-fgt-a" {
+module "vnet-fgt-b" {
   source              = "Azure/avm-res-network-virtualnetwork/azurerm"
   version             = "0.4.2"
-  name                = "vnet-fgt-a"
-  enable_telemetry    = true
-  resource_group_name = module.rg-a.name
-  location            = var.region-a
+  name                = "vnet-fgt-b"
+  enable_telemetry    = false
+  resource_group_name = module.rg-b.name
+  location            = var.region-b
 
-  address_space = ["172.16.0.0/22"]
+  address_space = ["172.26.0.0/22"]
 
   subnets = {
     snet-external = {
       name             = "snet-external"
-      address_prefixes = ["172.16.0.0/26"]
+      address_prefixes = ["172.26.0.0/26"]
     }
 
     snet-internal = {
       name             = "snet-internal"
-      address_prefixes = ["172.16.0.64/26"]
+      address_prefixes = ["172.26.0.64/26"]
     }
 
-    snet-ars-a = {
+    snet-ars-b = {
       name             = "RouteServerSubnet"
-      address_prefixes = ["172.16.1.0/27"]
+      address_prefixes = ["172.26.1.0/27"]
     }
 
-    snet-bastion-a = {
+    snet-bastion-b = {
       name             = "AzureBastionSubnet"
-      address_prefixes = ["172.16.1.32/27"]
+      address_prefixes = ["172.26.1.32/27"]
     }
   }
 }
 
-module "rt-fgt-external-a" {
+module "rt-fgt-external-b" {
   source              = "Azure/avm-res-network-routetable/azurerm"
   version             = "0.2.2"
-  location            = var.region-a
-  resource_group_name = module.rg-a.name
-  name                = "rt-fgt-external-a"
+  location            = var.region-b
+  resource_group_name = module.rg-b.name
+  name                = "rt-fgt-external-b"
 
   disable_bgp_route_propagation = false
 
@@ -49,28 +49,28 @@ module "rt-fgt-external-a" {
   }
 
   subnet_resource_ids = {
-    subnet1 = module.vnet-fgt-a.subnets["snet-external"].resource_id
+    subnet1 = module.vnet-fgt-b.subnets["snet-external"].resource_id
   }
 
   depends_on = [
-    module.rg-a,
+    module.rg-b,
   ]
 }
 
-module "rt-fgt-internal-a" {
+module "rt-fgt-internal-b" {
   source              = "Azure/avm-res-network-routetable/azurerm"
   version             = "0.2.2"
-  location            = var.region-a
-  resource_group_name = module.rg-a.name
-  name                = "rt-fgt-internal-a"
+  location            = var.region-b
+  resource_group_name = module.rg-b.name
+  name                = "rt-fgt-internal-b"
 
   disable_bgp_route_propagation = false
 
   subnet_resource_ids = {
-    subnet1 = module.vnet-fgt-a.subnets["snet-internal"].resource_id
+    subnet1 = module.vnet-fgt-b.subnets["snet-internal"].resource_id
   }
 
   depends_on = [
-    module.rg-a,
+    module.rg-b,
   ]
 }

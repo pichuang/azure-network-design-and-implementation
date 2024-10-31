@@ -7,7 +7,7 @@ module "pip-ars-a" {
   enable_telemetry        = var.enable_telemetry
   resource_group_name     = module.rg-a.name
   name                    = "pip-ars-a"
-  location                = azurerm_resource_group.rg-a.location
+  location                = var.region-a
   allocation_method       = "Static"
   sku                     = "Standard"
   zones                   = [1, 2, 3]
@@ -20,7 +20,7 @@ module "pip-ars-a" {
 resource "azurerm_route_server" "ars-a" {
   name                             = "ars-a"
   resource_group_name              = module.rg-a.name
-  location                         = azurerm_resource_group.rg-a.location
+  location                         = var.region-a
   sku                              = "Standard"
   public_ip_address_id             = module.pip-ars-a.public_ip_id
   subnet_id                        = module.vnet-fgt-a.subnets["snet-ars-a"].resource_id
