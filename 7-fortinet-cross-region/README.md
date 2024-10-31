@@ -16,7 +16,8 @@ terraform apply --auto-approve
 2. Deploy FortiGate in each region
 
     1. Open Azure Marketplace and launch FortiGate Standalone VM. [Link][1]
-    ![](./images/7-azuremarketplace-fortigate-standalone-vm.png)
+        ![](../img/7-azuremarketplace-fortigate-standalone-vm.png)
+
     2. Use FortiGate `Single VM` module to deploy FortiGate in each region manually.
 
 
