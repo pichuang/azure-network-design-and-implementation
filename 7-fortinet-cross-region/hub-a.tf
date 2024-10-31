@@ -73,7 +73,7 @@ module "rt-fgt-internal-a" {
   disable_bgp_route_propagation = true
 
   subnet_resource_ids = {
-    subnet1 = module.vnet-fgt-a.subnets["snet-internal"].resource_id
+    subnet-internal-a = module.vnet-fgt-a.subnets["snet-internal"].resource_id
   }
 
   depends_on = [

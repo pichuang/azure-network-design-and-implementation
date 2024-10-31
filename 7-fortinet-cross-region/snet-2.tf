@@ -39,7 +39,7 @@ module "rt-2" {
   }
 
   subnet_resource_ids = {
-    subnet1 = module.snet-2.resource_id
+    snet-2 = module.snet-2.resource_id
   }
 
   depends_on = [
