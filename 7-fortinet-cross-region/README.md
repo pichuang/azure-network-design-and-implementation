@@ -8,6 +8,12 @@ This example demonstrates how to deploy FortiGate in two different regions and c
 
 ![](../img/7-fortigate-cross-region-bgp-exchange.png)
 
+## Tips
+
+1. Regarding Hub-Spoke network traffic: when vm-1 (Spoke VM) in vnet-1 communicates with vm-2 (Hub VM) in vnet-2, you need to specifically write designated routes to FortiGate Internal (172.16.0.100) for FortiGate to function properly. Without these routes, the default direct connection via VNet Peering allows network reachability between them, but traffic won't pass through FortiGate.
+
+2. For exchanging routes between two FortiGates: since FortiGate cannot control the contents of the Azure Route Table (external), even with BGP protocol, connecting different subnets traditionally requires manually writing routes to the Azure Route Table for network connectivity. This approach sacrifices the benefits of the BGP Dynamic Routing Protocol. The recommended approach is to use a Tunnel Interface over Azure NIC, allowing all routes to be exchanged and communicated through the Tunnel Interface. This tunnel can use GRE, IPsec, or VXLAN, with VXLAN being recommended for its lighter weight.
+
 ## Step
 
 1. Deploy base resource without FortiGate
