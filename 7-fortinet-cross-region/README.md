@@ -4,6 +4,10 @@
 
 This example demonstrates how to deploy FortiGate in two different regions and connect them with BGP.
 
+## Architecture
+
+![](../img/7-fortigate-cross-region-bgp-exchange.png)
+
 ## Step
 
 1. Deploy base resource without FortiGate
