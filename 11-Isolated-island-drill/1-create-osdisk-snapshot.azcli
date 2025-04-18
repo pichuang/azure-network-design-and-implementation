@@ -1,0 +1,24 @@
+
+# Parameters
+RESOURCE_GROUP="rg-11-isolated-island"
+SOURCE_VM_NAME="vm-island-jpe"
+# SNAPSHOT_NAME="snapshot-osdisk-$(date +%Y%m%d%H%M%S)"
+SNAPSHOT_NAME="snapshot-osdisk"
+
+# Get OS disk ID
+echo "Getting OS disk ID for $SOURCE_VM_NAME"
+OS_DISK_ID=$(az vm show \
+  --resource-group $RESOURCE_GROUP \
+  --name $SOURCE_VM_NAME \
+  --query "storageProfile.osDisk.managedDisk.id" \
+  --output tsv)
+
+# Create snapshot
+echo "Creating snapshot... $SNAPSHOT_NAME"
+az snapshot create \
+  --resource-group $RESOURCE_GROUP \
+  --name $SNAPSHOT_NAME \
+  --source $OS_DISK_ID \
+  --output none
+
+echo "Snapshot $SNAPSHOT_NAME created for $SOURCE_VM_NAME"

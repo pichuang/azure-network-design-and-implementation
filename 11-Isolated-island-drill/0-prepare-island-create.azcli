@@ -1,0 +1,81 @@
+RESOURCE_GROUP="rg-11-isolated-island"
+REGION="japaneast"
+VNET1_NAME="vnet-island-a"
+VNET1_PREFIX="192.168.100.0/24"
+VNET2_NAME="vnet-island-b"
+VNET2_PREFIX="192.168.200.0/24"
+
+# VM info
+VM_NAME="vm-island-jpe"
+ADMIN_USER="azureuser"
+ADMIN_PASSWORD="YourP@ssw0rd123"
+
+#
+# Execute
+#
+
+echo "Creating resource group... $RESOURCE_GROUP"
+az group create \
+  --name $RESOURCE_GROUP \
+  --location $REGION \
+  --output none
+
+echo "Creating VNet... $VNET1_NAME"
+az network vnet create \
+  --resource-group $RESOURCE_GROUP \
+  --name $VNET1_NAME \
+  --address-prefix $VNET1_PREFIX \
+  --subnet-name default \
+  --output none
+
+echo "Creating VNet... $VNET2_NAME"
+az network vnet create \
+  --resource-group $RESOURCE_GROUP \
+  --name $VNET2_NAME \
+  --address-prefix $VNET2_PREFIX \
+  --subnet-name default \
+  --output none
+
+
+echo "Creating NIC... nic-vnet-1"
+az network nic create \
+  --resource-group $RESOURCE_GROUP \
+  --name nic-vnet-1 \
+  --vnet-name $VNET1_NAME \
+  --subnet default \
+  --output none
+
+echo "Creating VM... $VM_NAME"
+az vm create \
+  --resource-group $RESOURCE_GROUP \
+  --name $VM_NAME \
+  --nics nic-vnet-1 \
+  --image Ubuntu2204 \
+  --size Standard_B1s \
+  --admin-username $ADMIN_USER \
+  --admin-password $ADMIN_PASSWORD \
+  --storage-sku Standard_LRS \
+  --os-disk-name orgin-os-disk \
+  --output none
+
+echo "Enabling boot diagnostics... $VM_NAME"
+az vm boot-diagnostics enable \
+  --resource-group $RESOURCE_GROUP \
+  --name $VM_NAME \
+  --output none
+
+echo "Running command on VM... $VM_NAME"
+az vm run-command invoke \
+  --resource-group $RESOURCE_GROUP \
+  --name $VM_NAME \
+  --command-id RunShellScript \
+  --scripts "echo source_packages > /home/azureuser/hello.txt" \
+  --output none
+
+IP_ADDRESS=$(az vm list-ip-addresses \
+  --resource-group $RESOURCE_GROUP \
+  --name $VM_NAME \
+  --query "[].virtualMachine.network.privateIpAddresses[]" \
+  --output tsv)
+
+echo "VM IP Address: $IP_ADDRESS"

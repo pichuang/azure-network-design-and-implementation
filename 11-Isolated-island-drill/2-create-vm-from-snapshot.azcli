@@ -1,0 +1,51 @@
+RESOURCE_GROUP="rg-11-isolated-island"
+SNAPSHOT_NAME="snapshot-osdisk"
+TARGET_VM_NAME="vm-island-jpe-vnet2"
+TARGET_NIC_NAME="nic-vnet-2"
+TARGET_VNET_NAME="vnet-island-b"
+TARGET_SUBNET_NAME="default"
+TARGET_DISK_SKU="Standard_LRS"
+TARGET_OS_DISK_NAME="osdisk-from-snapshot"
+
+# Create managed disk from snapshot
+echo "Creating managed disk from snapshot... $TARGET_OS_DISK_NAME"
+az disk create \
+  --resource-group $RESOURCE_GROUP \
+  --name $TARGET_OS_DISK_NAME \
+  --source $SNAPSHOT_NAME \
+  --sku $TARGET_DISK_SKU \
+  --output none
+
+# Create NIC for VM
+echo "Creating NIC... $TARGET_NIC_NAME"
+az network nic create \
+  --resource-group $RESOURCE_GROUP \
+  --name $TARGET_NIC_NAME \
+  --vnet-name $TARGET_VNET_NAME \
+  --subnet $TARGET_SUBNET_NAME \
+  --output none
+
+echo "Creating VM... $TARGET_VM_NAME"
+az vm create \
+  --resource-group $RESOURCE_GROUP \
+  --name $TARGET_VM_NAME \
+  --nics $TARGET_NIC_NAME \
+  --attach-os-disk $TARGET_OS_DISK_NAME \
+  --os-type Linux \
+  --output none
+
+echo "Enabling boot diagnostics... $TARGET_VM_NAME"
+az vm boot-diagnostics enable \
+  --resource-group $RESOURCE_GROUP \
+  --name $TARGET_VM_NAME \
+  --output none
+
+echo "New VM $TARGET_VM_NAME created in $TARGET_VNET_NAME using snapshot disk."
+
+TARGET_IP_ADDRESS=$(az vm list-ip-addresses \
+  --resource-group $RESOURCE_GROUP \
+  --name $TARGET_VM_NAME \
+  --query "[].virtualMachine.network.privateIpAddresses[]" \
+  --output tsv)
+
+echo "VM IP Address: $TARGET_IP_ADDRESS"
