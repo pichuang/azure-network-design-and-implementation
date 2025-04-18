@@ -1,0 +1,111 @@
+#!/bin/bash
+
+RESOURCE_GROUP="rg-lab-nva-twn"
+LOCATION="taiwannorth"
+# Virtual Network - Spoke
+VNET_SPOKE_NAME="vnet-spoke-twn"
+VNET_SPOKE_PREFIX="10.72.12.0/24"
+# Subnet - jumper
+VNET_SPOKE_SUBNET_JUMPER_NAME="snet-jumper"
+VNET_SPOKE_SUBNET_JUMPER_PREFIX="10.72.12.0/28"
+ROUTE_TABLE_SPOKE_NAME="rg-spoke-nva-twn"
+DEFAULT_ROUTE_IP="10.72.0.36"
+
+NSG_NAME="nsg-spoke-nva-twn"
+
+
+#
+# Execute
+#
+
+
+if ! az group exists --name $RESOURCE_GROUP; then
+    echo "Resource Group $RESOURCE_GROUP does not exist. Creating..."
+    az group create \
+        --name $RESOURCE_GROUP \
+        --location $LOCATION \
+        --output none
+fi
+
+echo "Creating Virtual Network... $VNET_SPOKE_NAME"
+az network vnet create \
+    --resource-group $RESOURCE_GROUP \
+    --name $VNET_SPOKE_NAME \
+    --address-prefix $VNET_SPOKE_PREFIX \
+    --output none
+
+echo "Creating Subnet... $VNET_SPOKE_SUBNET_JUMPER_NAME"
+az network vnet subnet create \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_SPOKE_NAME \
+    --name $VNET_SPOKE_SUBNET_JUMPER_NAME \
+    --address-prefix $VNET_SPOKE_SUBNET_JUMPER_PREFIX \
+    --output none
+
+echo "Creating Route Table... $ROUTE_TABLE_SPOKE_NAME"
+az network route-table create \
+    --resource-group $RESOURCE_GROUP \
+    --name $ROUTE_TABLE_SPOKE_NAME \
+    --location $LOCATION \
+    --output none
+
+echo "Associating Route Table with Subnet... $VNET_SPOKE_SUBNET_JUMPER_NAME"
+az network vnet subnet update \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_SPOKE_NAME \
+    --name $VNET_SPOKE_SUBNET_JUMPER_NAME \
+    --route-table $ROUTE_TABLE_SPOKE_NAME \
+    --output none
+
+az network route-table update \
+    --resource-group $RESOURCE_GROUP \
+    --name $ROUTE_TABLE_SPOKE_NAME \
+    --disable-bgp-route-propagation \
+    --output none
+
+az network route-table route create \
+    --resource-group $RESOURCE_GROUP \
+    --route-table-name $ROUTE_TABLE_SPOKE_NAME \
+    --name "route-to-default" \
+    --address-prefix "0.0.0.0/0" \
+    --next-hop-type "VirtualAppliance" \
+    --next-hop-ip-address "$DEFAULT_ROUTE_IP" \
+    --output none
+
+echo "Creating NSG... $NSG_NAME"
+az network nsg create \
+    --resource-group $RESOURCE_GROUP \
+    --name $NSG_NAME \
+    --location $LOCATION \
+    --output none
+
+az network nsg rule create \
+    --resource-group $RESOURCE_GROUP \
+    --nsg-name $NSG_NAME \
+    --name "outbound-any" \
+    --priority 1000 \
+    --access Allow \
+    --direction Outbound \
+    --protocol "*" \
+    --source-port "*" \
+    --destination-port "*" \
+    --output none
+
+az network nsg rule create \
+    --resource-group $RESOURCE_GROUP \
+    --nsg-name $NSG_NAME \
+    --name "inbound-any" \
+    --priority 1000 \
+    --access Allow \
+    --direction Inbound \
+    --protocol "*" \
+    --source-port "*" \
+    --destination-port "*" \
+    --output none
+
+az network vnet subnet update \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_SPOKE_NAME \
+    --name $VNET_SPOKE_SUBNET_JUMPER_NAME \
+    --network-security-group $NSG_NAME \
+    --output none

@@ -1,0 +1,346 @@
+#!/bin/bash
+
+RESOURCE_GROUP="rg-lab-nva-twn"
+LOCATION="taiwannorth"
+
+#
+# VNET HUB
+#
+# Virtual Network - HUB
+VNET_HUB_NAME="vnet-hub-twn"
+VNET_HUB_PREFIX="10.72.0.0/24"
+# Subnet - external
+VNET_HUB_SUBNET_EXTERNAL_NAME="snet-external"
+VNET_HUB_SUBNET_EXTERNAL_PREFIX="10.72.0.0/28"
+# Subnet - internal
+VNET_HUB_SUBNET_INTERNAL_NAME="snet-internal"
+VNET_HUB_SUBNET_INTERNAL_PREFIX="10.72.0.16/28"
+# Subnet - mgmt
+VNET_HUB_SUBNET_MGMT_NAME="snet-mgmt"
+VNET_HUB_SUBNET_MGMT_PREFIX="10.72.0.32/28"
+# Subnet - hasync
+VNET_HUB_SUBNET_HA_NAME="snet-hasync"
+VNET_HUB_SUBNET_HA_PREFIX="10.72.0.48/28"
+# Subnet - Virtual Network Gateway
+VNET_HUB_SUBNET_GATEWAY_NAME="GatewaySubnet"
+VNET_HUB_SUBNET_GATEWAY_PREFIX="10.72.0.64/27"
+# Subnet - AzureBastionSubnet
+VNET_HUB_SUBNET_BASTION_NAME="AzureBastionSubnet"
+VNET_HUB_SUBNET_BASTION_PREFIX="10.72.0.128/26"
+# Subnet - Azure Route Server
+VNET_HUB_SUBNET_ARS_NAME="RouteServerSubnet"
+VNET_HUB_SUBNET_ARS_PREFIX="10.72.0.192/26"
+
+#
+# NSG
+#
+
+NSG_HUB_EXTERNAL_NAME="nsg-hub-external-twn"
+NSG_HUB_INTERNAL_NAME="nsg-hub-internal-twn"
+
+
+#
+# Route table
+#
+ROUTE_TABLE_FOR_EXTERNAL_NAME="rt-nva-snet-external"
+ROUTE_TABLE_FOR_EXTERNAL_DISABLE_BGP_ROUTE_PROPAGATION="false"
+RT_FOR_EXTERNAL_TO_DEFAULT_ROUTE="default-route"
+RT_FOR_EXTERNAL_TO_DEFAULT_ROUTE_ADDRESS_PREFIX="0.0.0.0/0"
+RT_FOR_EXTERNAL_TO_DEFAULT_ROUTE_NEXT_HOP_TYPE="Internet"
+
+ROUTE_TABLE_FOR_INTERNAL_NAME="rt-nva-snet-internal"
+ROUTE_TABLE_FOR_INTERNAL_DISABLE_BGP_ROUTE_PROPAGATION="true"
+
+ROUTE_TABLE_FOR_GATEWAY_SUBNET_NAME="rt-nva-gatewaysubnet"
+ROUTE_TABLE_FOR_GATEWAY_SUBNET_DISABLE_BGP_ROUTE_PROPAGATION="false"
+RT_FOR_GATEWAYSUBNET_TO_DEFAULT_ROUTE="spoke-route"
+RT_FOR_GATEWAYSUBNET_TO_DEFAULT_ROUTE_ADDRESS_PREFIX="10.72.12.0/24"
+RT_FOR_GATEWAYSUBNET_TO_DEFAULT_ROUTE_NEXT_HOP_TYPE="VirtualAppliance"
+RT_FOR_GATEWAYSUBNET_TO_DEFAULT_ROUTE_NEXT_HOP_IP="10.72.0.4"
+
+#
+# ExpressRoute Gateway
+#
+ERGW_NAME="er-gw-twn"
+
+#
+# Azure Route Server
+#
+ARS_NAME="ars-hub-twn"
+ARS_PEER_ASN="65533"
+ARS_PEER_NAME_1="peer-1"
+ARS_PEER_IP_1="10.72.0.20"
+
+
+
+#
+# Execute
+#
+
+# Create Resource Group
+az group create \
+    --name $RESOURCE_GROUP \
+    --location $LOCATION \
+    --output none
+
+# Create Virtual Network
+echo "Creating Virtual Network... $VNET_HUB_NAME"
+az network vnet create \
+    --resource-group $RESOURCE_GROUP \
+    --name $VNET_HUB_NAME \
+    --address-prefix $VNET_HUB_PREFIX \
+    --output none
+
+echo "Creating Subnet... $VNET_HUB_SUBNET_EXTERNAL_NAME"
+az network vnet subnet create \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_HUB_NAME \
+    --name $VNET_HUB_SUBNET_EXTERNAL_NAME \
+    --address-prefix $VNET_HUB_SUBNET_EXTERNAL_PREFIX \
+    --output none
+
+echo "Creating Subnet... $VNET_HUB_SUBNET_INTERNAL_NAME"
+az network vnet subnet create \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_HUB_NAME \
+    --name $VNET_HUB_SUBNET_INTERNAL_NAME \
+    --address-prefix $VNET_HUB_SUBNET_INTERNAL_PREFIX \
+    --output none
+
+echo "Creating Subnet... $VNET_HUB_SUBNET_MGMT_NAME"
+az network vnet subnet create \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_HUB_NAME \
+    --name $VNET_HUB_SUBNET_MGMT_NAME \
+    --address-prefix $VNET_HUB_SUBNET_MGMT_PREFIX \
+    --output none
+
+echo "Creating Subnet... $VNET_HUB_SUBNET_HA_NAME"
+az network vnet subnet create \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_HUB_NAME \
+    --name $VNET_HUB_SUBNET_HA_NAME \
+    --address-prefix $VNET_HUB_SUBNET_HA_PREFIX \
+    --output none
+
+echo "Creating Subnet... $VNET_HUB_SUBNET_GATEWAY_NAME"
+az network vnet subnet create \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_HUB_NAME \
+    --name $VNET_HUB_SUBNET_GATEWAY_NAME \
+    --address-prefix $VNET_HUB_SUBNET_GATEWAY_PREFIX \
+    --output none
+
+echo "Creating Subnet... $VNET_HUB_SUBNET_BASTION_NAME"
+az network vnet subnet create \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_HUB_NAME \
+    --name $VNET_HUB_SUBNET_BASTION_NAME \
+    --address-prefix $VNET_HUB_SUBNET_BASTION_PREFIX \
+    --output none
+
+echo "Creating Subnet... $VNET_HUB_SUBNET_ARS_NAME"
+az network vnet subnet create \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_HUB_NAME \
+    --name $VNET_HUB_SUBNET_ARS_NAME \
+    --address-prefix $VNET_HUB_SUBNET_ARS_PREFIX \
+    --output none
+
+echo "Creating NSG... $NSG_HUB_EXTERNAL_NAME"
+az network nsg create \
+    --resource-group $RESOURCE_GROUP \
+    --name $NSG_HUB_EXTERNAL_NAME \
+    --location $LOCATION \
+    --output none
+
+az network nsg rule create \
+    --resource-group $RESOURCE_GROUP \
+    --nsg-name $NSG_HUB_EXTERNAL_NAME \
+    --name "outbound-any" \
+    --priority 1000 \
+    --access Allow \
+    --direction Outbound \
+    --protocol "*" \
+    --source-port "*" \
+    --destination-port "*" \
+    --output none
+
+az network nsg rule create \
+    --resource-group $RESOURCE_GROUP \
+    --nsg-name $NSG_HUB_EXTERNAL_NAME \
+    --name "inbound-any" \
+    --priority 1000 \
+    --access Allow \
+    --direction Inbound \
+    --protocol "*" \
+    --source-port "*" \
+    --destination-port "*" \
+    --output none
+
+az network vnet subnet update \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_HUB_NAME \
+    --name $VNET_HUB_SUBNET_EXTERNAL_NAME \
+    --network-security-group $NSG_HUB_EXTERNAL_NAME \
+    --output none
+
+echo "Creating NSG... $NSG_HUB_INTERNAL_NAME"
+az network nsg create \
+    --resource-group $RESOURCE_GROUP \
+    --name $NSG_HUB_INTERNAL_NAME \
+    --location $LOCATION \
+    --output none
+
+az network nsg rule create \
+    --resource-group $RESOURCE_GROUP \
+    --nsg-name $NSG_HUB_INTERNAL_NAME \
+    --name "outbound-any" \
+    --priority 1000 \
+    --access Allow \
+    --direction Outbound \
+    --protocol "*" \
+    --source-port "*" \
+    --destination-port "*" \
+    --output none
+
+az network nsg rule create \
+    --resource-group $RESOURCE_GROUP \
+    --nsg-name $NSG_HUB_INTERNAL_NAME \
+    --name "inbound-any" \
+    --priority 1000 \
+    --access Allow \
+    --direction Inbound \
+    --protocol "*" \
+    --source-port "*" \
+    --destination-port "*" \
+    --output none
+
+az network vnet subnet update \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_HUB_NAME \
+    --name $VNET_HUB_SUBNET_INTERNAL_NAME \
+    --network-security-group $NSG_HUB_INTERNAL_NAME \
+    --output none
+
+echo "Creating Route Table... $ROUTE_TABLE_FOR_GATEWAY_SUBNET_NAME"
+az network route-table create \
+    --resource-group $RESOURCE_GROUP \
+    --name $ROUTE_TABLE_FOR_GATEWAY_SUBNET_NAME \
+    --location $LOCATION \
+    --disable-bgp-route-propagation $ROUTE_TABLE_FOR_GATEWAY_SUBNET_DISABLE_BGP_ROUTE_PROPAGATION \
+    --output none
+
+az network route-table route create \
+    --resource-group $RESOURCE_GROUP \
+    --route-table-name $ROUTE_TABLE_FOR_GATEWAY_SUBNET_NAME \
+    --name $RT_FOR_GATEWAYSUBNET_TO_DEFAULT_ROUTE \
+    --address-prefix $RT_FOR_GATEWAYSUBNET_TO_DEFAULT_ROUTE_ADDRESS_PREFIX \
+    --next-hop-type $RT_FOR_GATEWAYSUBNET_TO_DEFAULT_ROUTE_NEXT_HOP_TYPE \
+    --next-hop-ip-address $RT_FOR_GATEWAYSUBNET_TO_DEFAULT_ROUTE_NEXT_HOP_IP \
+    --output none
+
+echo "Associating Route Table with Subnet... $VNET_HUB_SUBNET_GATEWAY_NAME"
+az network vnet subnet update \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_HUB_NAME \
+    --name $VNET_HUB_SUBNET_GATEWAY_NAME \
+    --route-table $ROUTE_TABLE_FOR_GATEWAY_SUBNET_NAME \
+    --output none
+
+echo "Creating Route Table... $ROUTE_TABLE_FOR_EXTERNAL_NAME"
+az network route-table create \
+    --resource-group $RESOURCE_GROUP \
+    --name $ROUTE_TABLE_FOR_EXTERNAL_NAME \
+    --location $LOCATION \
+    --disable-bgp-route-propagation $ROUTE_TABLE_FOR_EXTERNAL_DISABLE_BGP_ROUTE_PROPAGATION \
+    --output none
+
+az network route-table route create \
+    --resource-group $RESOURCE_GROUP \
+    --route-table-name $ROUTE_TABLE_FOR_EXTERNAL_NAME \
+    --name $RT_FOR_EXTERNAL_TO_DEFAULT_ROUTE \
+    --address-prefix $RT_FOR_EXTERNAL_TO_DEFAULT_ROUTE_ADDRESS_PREFIX \
+    --next-hop-type $RT_FOR_EXTERNAL_TO_DEFAULT_ROUTE_NEXT_HOP_TYPE \
+    --output none
+
+echo "Associating Route Table with Subnet... $VNET_HUB_SUBNET_EXTERNAL_NAME"
+az network vnet subnet update \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_HUB_NAME \
+    --name $VNET_HUB_SUBNET_EXTERNAL_NAME \
+    --route-table $ROUTE_TABLE_FOR_EXTERNAL_NAME \
+    --output none
+
+echo "Creating Route Table... $ROUTE_TABLE_FOR_INTERNAL_NAME"
+az network route-table create \
+    --resource-group $RESOURCE_GROUP \
+    --name $ROUTE_TABLE_FOR_INTERNAL_NAME \
+    --location $LOCATION \
+    --disable-bgp-route-propagation $ROUTE_TABLE_FOR_INTERNAL_DISABLE_BGP_ROUTE_PROPAGATION \
+    --output none
+
+echo "Associating Route Table with Subnet... $VNET_HUB_SUBNET_INTERNAL_NAME"
+az network vnet subnet update \
+    --resource-group $RESOURCE_GROUP \
+    --vnet-name $VNET_HUB_NAME \
+    --name $VNET_HUB_SUBNET_INTERNAL_NAME \
+    --route-table $ROUTE_TABLE_FOR_INTERNAL_NAME \
+    --output none
+
+echo "Checking ExpressRoute Gateway"
+if [[ -z $(az network vnet-gateway show --resource-group $RESOURCE_GROUP --name $ERGW_NAME --query id -o tsv 2>/dev/null) ]]; then
+    echo "ExpressRoute Gateway is not exist, starting to create..."
+    az network public-ip create --name pip-$ERGW_NAME --resource-group $RESOURCE_GROUP --location $LOCATION --sku "Standard" --allocation-method "Static" --tier "Regional" --output none
+    az network vnet-gateway create --name $ERGW_NAME --resource-group $RESOURCE_GROUP --location $LOCATION --public-ip-address pip-$ERGW_NAME --vnet $VNET_HUB_NAME --gateway-type "ExpressRoute" --sku "Standard" --no-wait
+
+    echo "Checking ExpressRoute Gateway provisioning status..."
+    # Checking ExpressRoute Gateway provisioning state
+    ergwstate=''
+    while [[ $ergwstate != 'Succeeded' ]];
+    do
+        ergwstate=$(az network vnet-gateway show --resource-group $RESOURCE_GROUP --name $ERGW_NAME --query 'provisioningState' -o tsv)
+        echo "$ERGW_NAME provisioningState="$ergwstate
+        sleep 5
+    done
+else
+    echo "ExpressRoute Gateway already exists, continue..."
+fi
+
+echo "Checking Azure Route Server"
+if [[ -z $(az network routeserver show --resource-group $RESOURCE_GROUP --name $ARS_NAME --query id -o tsv 2>/dev/null) ]]; then
+    echo "Azure Route Server is not exist, starting to create..."
+    az network public-ip create --name pip-$ARS_NAME --resource-group $RESOURCE_GROUP --location $LOCATION --sku "Standard" --allocation-method "Static" --tier "Regional" --output none
+    az network routeserver create --name $ARS_NAME --resource-group $RESOURCE_GROUP --public-ip-address pip-$ARS_NAME --hosted-subnet $(az network vnet subnet show --resource-group $RESOURCE_GROUP --vnet-name $VNET_HUB_NAME --name $VNET_HUB_SUBNET_ARS_NAME --query id --out tsv) --hub-routing-preference "ASPath" --location $LOCATION --no-wait
+
+    echo "Checking Azure Route Server provisioning status..."
+    arsstate=''
+    while [[ $arsstate != 'Succeeded' ]];
+    do
+        arsstate=$(az network routeserver show --resource-group $RESOURCE_GROUP --name $ARS_NAME --query 'provisioningState' -o tsv)
+        echo "$ARS_NAME provisioningState="$arsstate
+        sleep 5
+    done
+
+    echo "Enabling B2B traffic..."
+    az network routeserver update --resource-group $RESOURCE_GROUP --name $ARS_NAME --allow-b2b-traffic --no-wait
+    echo "Checking Azure Route Server provisioning status..."
+    arsstate=''
+    while [[ $arsstate != 'Succeeded' ]];
+    do
+        arsstate=$(az network routeserver show --resource-group $RESOURCE_GROUP --name $ARS_NAME --query 'provisioningState' -o tsv)
+        echo "$ARS_NAME provisioningState="$arsstate
+        sleep 5
+    done
+else
+    echo "Azure Route Server already exists, continue..."
+fi
+
+echo "Checking Azure Route Server Peering"
+if [[ -z $(az network routeserver peering show --resource-group $RESOURCE_GROUP --routeserver $ARS_NAME --name $ARS_PEER_NAME_1 --query id -o tsv 2>/dev/null) ]]; then
+    echo "Creating Azure Route Server Peering - $ARS_PEER_NAME_1"
+    az network routeserver peering create --resource-group $RESOURCE_GROUP --routeserver $ARS_NAME --name $ARS_PEER_NAME_1 --peer-asn $ARS_PEER_ASN --peer-ip $ARS_PEER_IP_1 --output none
+else
+    echo "Azure Route Server Peering - $ARS_PEER_NAME_1 already exists"
+fi
+

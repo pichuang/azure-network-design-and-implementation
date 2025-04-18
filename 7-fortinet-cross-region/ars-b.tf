@@ -6,8 +6,7 @@ module "pip-ars-b" {
 
   enable_telemetry        = var.enable_telemetry
   resource_group_name     = module.rg-b.name
-  name                    = "pip-ars-b"
-  location                = var.region-b
+  nocation                = var.region-b
   allocation_method       = "Static"
   sku                     = "Standard"
   zones                   = [1, 2, 3]
@@ -15,7 +14,8 @@ module "pip-ars-b" {
   idle_timeout_in_minutes = 4
   sku_tier                = "Regional"
   ddos_protection_mode    = "Disabled"
-}
+}ame                    = "pip-ars-b"
+  l
 
 resource "azurerm_route_server" "ars-b" {
   name                             = "ars-b"

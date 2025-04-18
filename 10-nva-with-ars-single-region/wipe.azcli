@@ -1,0 +1,5 @@
+#!/bin/bash
+
+RESOURCE_GROUP="rg-lab-nva-twn"
+
+az group delete --name $RESOURCE_GROUP --yes
