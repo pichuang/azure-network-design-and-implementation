@@ -12,7 +12,7 @@ $TargetOsDiskName = "osdisk-from-snapshot-" + (Get-Date -Format "yyyyMMddHHmm")
 $TargetVnetName = "vnet-island-b"
 $TargetSubnetName = "default"
 $TargetNicName = "nic-vnet-2"
-$TargetNicIP = "10.1.0.10"
+$TargetNicIP = "192.168.200.4"
 
 # 設定錯誤處理為 Stop，遇到錯誤立即跳出
 $ErrorActionPreference = "Stop"
